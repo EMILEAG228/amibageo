@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Convertisseur GPS ↔ Garmin | AmiBa Groupe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f9fc;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    header img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+
+    main {
+      padding: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .converter {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+
+    .box {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      width: 350px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      width: 100%;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 15px;
+      text-align: left;
+      background: #eef;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    footer {
+      margin-top: 40px;
+      background-color: #343a40;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .converter {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://emileag228.github.io/AmiBa-Informactic/logo.png" alt="Logo">
+    <h1>AmiBa Groupe - Convertisseur GPS ↔ Garmin</h1>
+  </header>
+
+  <main>
+    <h2>🧭 Conversion dynamique entre Google Maps et Garmin</h2>
+
+    <div class="converter">
+
+      <!-- Google vers Garmin -->
+      <div class="box">
+        <h3>🌍 Google → Garmin (UTM)</h3>
+        <label>Latitude :</label>
+        <input type="number" step="any" id="lat_google" placeholder="Ex: 6.5244">
+        <label>Longitude :</label>
+        <input type="number" step="any" id="lon_google" placeholder="Ex: 3.3792">
+        <button onclick="convertToGarmin()">Convertir</button>
+        <div class="result" id="result_garmin"></div>
+      </div>
+
+      <!-- Garmin vers Google -->
+      <div class="box">
+        <h3>🛰️ Garmin (UTM) → Google</h3>
+        <label>Easting (X) :</label>
+        <input type="number" step="any" id="easting" placeholder="Ex: 500000">
+        <label>Northing (Y) :</label>
+        <input type="number" step="any" id="northing" placeholder="Ex: 720000">
+        <button onclick="convertToGoogle()">Convertir</button>
+        <div class="result" id="result_google"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    © 2025 AmiBa Groupe | Développé par EMILE-AG 🚀
+  </footer>
+
+  <script>
+    const WGS84 = 'EPSG:4326';
+
+    function convertToGarmin() {
+      const lat = parseFloat(document.getElementById('lat_google').value);
+      const lon = parseFloat(document.getElementById('lon_google').value);
+      if (isNaN(lat) || isNaN(lon)) {
+        alert("Veuillez entrer une latitude et une longitude valides.");
+        return;
+      }
+
+      const zone = Math.floor((lon + 180) / 6) + 1;
+      const hemisphere = lat >= 0 ? "north" : "south";
+      const utmProj = `+proj=utm +zone=${zone} +datum=WGS84 +units=m +no_defs +${hemisphere}`;
+
+      const [x, y] = proj4(WGS84, utmProj, [lon, lat]);
+      document.getElementById("result_garmin").innerHTML = `
+        <strong>Zone :</strong> ${zone}${lat >= 0 ? "N" : "S"}<br>
+        <strong>Easting (X) :</strong> ${x.toFixed(2)} m<br>
+        <strong>Northing (Y) :</strong> ${y.toFixed(2)} m
+      `;
+    }
+
+    function convertToGoogle() {
+      const x = parseFloat(document.getElementById('easting').value);
+      const y = parseFloat(document.getElementById('northing').value);
+      if (isNaN(x) || isNaN(y)) {
+        alert("Veuillez entrer des coordonnées valides.");
+        return;
+      }
+
+      // Hypothèse : zone 31N (par défaut pour Afrique de l'Ouest)
+      const zone = 31;
+      const utmProj = `+proj=utm +zone=${zone} +datum=WGS84 +units=m +no_defs +north`;
+      const [lon, lat] = proj4(utmProj, WGS84, [x, y]);
+
+      document.getElementById("result_google").innerHTML = `
+        <strong>Latitude :</strong> ${lat.toFixed(6)}<br>
+        <strong>Longitude :</strong> ${lon.toFixed(6)}<br>
+        <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank">📍 Ouvrir dans Google Maps</a>
+      `;
+    }
+  </script>
+
+</body>
+</html>
