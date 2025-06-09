@@ -4,14 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Générateur Google Maps</title>
-  <!-- Icône de la page -->
   <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
@@ -63,7 +58,7 @@
       border-radius: 5px;
     }
 
-    button {
+    button, .btn-link {
       margin-top: 10px;
       width: 100%;
       padding: 12px;
@@ -73,9 +68,12 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: block;
     }
 
-    button:hover {
+    button:hover, .btn-link:hover {
       background-color: #0056b3;
     }
 
@@ -107,9 +105,11 @@
 
     #link {
       display: block;
-      margin-top: 10px;
+      margin-top: 15px;
       word-break: break-all;
       text-align: center;
+      color: #007bff;
+      font-weight: bold;
     }
 
     footer {
@@ -139,6 +139,7 @@
   <div class="container">
     <div class="form">
       <h2>📍 Générateur Google Maps</h2>
+
       <label for="lat">Latitude :</label>
       <input type="text" id="lat" placeholder="Exemple : 6.5244">
 
@@ -147,10 +148,11 @@
 
       <button onclick="generateLink()">Générer le lien</button>
       <button onclick="useCurrentLocation()">📍 Utiliser ma position actuelle</button>
-      <a href="utmgps.html"><button>Garmin GPS</button></a>
-      <a href="converter.html"><button>Convertisseur GPS ↔ Garmin</button></a>
 
-      <a id="link" href="#" target="_blank"></a>
+      <a href="utmgps.html" class="btn-link">🔧 Outil Garmin GPS</a>
+      <a href="converter.html" class="btn-link">🔄 Convertisseur GPS ↔ Garmin</a>
+
+      <a id="link" href="#" target="_blank">🗺️ Le lien généré s'affichera ici</a>
     </div>
 
     <div class="logo-container">
@@ -168,8 +170,9 @@
       const lon = document.getElementById('lon').value;
       if (lat && lon) {
         const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
-        document.getElementById('link').href = url;
-        document.getElementById('link').textContent = "🗺️ Démarrer la navigation vers cette position";
+        const link = document.getElementById('link');
+        link.href = url;
+        link.textContent = "🗺️ Démarrer la navigation vers cette position";
       } else {
         alert("Veuillez entrer une latitude et une longitude.");
       }
