@@ -102,6 +102,23 @@
       padding: 15px;
     }
 
+    .return-button {
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .return-button:hover {
+      background-color: #0056b3;
+    }
+
     @media (max-width: 768px) {
       .converter {
         flex-direction: column;
@@ -150,6 +167,9 @@
   <footer>
     © 2025 AmiBa Groupe | Développé par EMILE-AG 🚀
   </footer>
+
+  <!-- Bouton Retour -->
+  <a href="index.html" class="return-button">⬅️ Retour</a>
 
   <script>
     const WGS84 = 'EPSG:4326';
