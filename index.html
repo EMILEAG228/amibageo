@@ -5,49 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Générateur Google Maps</title>
   <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
 
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #eef2f3, #8e9eab);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      padding: 20px;
+      transition: background 0.5s ease;
     }
 
     .container {
       display: flex;
       flex-wrap: wrap;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 30px;
       justify-content: center;
       align-items: center;
-      gap: 20px;
-      max-width: 900px;
+      gap: 30px;
+      max-width: 1000px;
       width: 100%;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .form {
-      flex: 1 1 300px;
-      min-width: 280px;
+      flex: 1 1 350px;
+      min-width: 300px;
     }
 
     h2 {
-      font-size: 22px;
+      font-size: 24px;
       margin-bottom: 20px;
-      color: #333;
+      color: #007bff;
       text-align: center;
     }
 
     label {
       display: block;
-      margin: 10px 0 5px;
-      font-weight: bold;
+      margin: 12px 0 5px;
+      font-weight: 600;
     }
 
     input {
@@ -55,58 +66,66 @@
       padding: 10px;
       font-size: 14px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 8px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
     }
 
     button, .btn-link {
-      margin-top: 10px;
+      margin-top: 12px;
       width: 100%;
       padding: 12px;
       font-size: 15px;
-      background-color: #007bff;
+      background: linear-gradient(90deg, #007bff, #0056b3);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
       text-align: center;
-      text-decoration: none;
-      display: block;
     }
 
     button:hover, .btn-link:hover {
-      background-color: #0056b3;
+      background: linear-gradient(90deg, #0056b3, #007bff);
+      transform: translateY(-2px);
+    }
+
+    .btn-link {
+      display: block;
+      text-decoration: none;
     }
 
     .logo-container {
-      width: 6cm;
-      height: 6cm;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
       overflow: hidden;
-      animation: colorChange 5s infinite;
+      animation: pulseLogo 6s infinite;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      background: white;
     }
 
     .logo-container img {
       width: 90%;
-      height: 90%;
+      height: auto;
       object-fit: contain;
     }
 
-    @keyframes colorChange {
-      0%   { background-color: #ffeb3b; }
-      25%  { background-color: #f44336; }
-      50%  { background-color: #2196f3; }
-      75%  { background-color: #4caf50; }
-      100% { background-color: #ffeb3b; }
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
 
     #link {
       display: block;
       margin-top: 15px;
-      word-break: break-all;
+      word-break: break-word;
       text-align: center;
       color: #007bff;
       font-weight: bold;
@@ -119,7 +138,8 @@
       width: 100%;
       background: linear-gradient(90deg, #007bff, #6610f2, #e83e8c);
       color: white;
-      animation: gradientMove 5s infinite linear;
+      background-size: 300% 300%;
+      animation: gradientMove 6s linear infinite;
     }
 
     @keyframes gradientMove {
@@ -129,8 +149,11 @@
 
     @media (max-width: 600px) {
       .logo-container {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
+      }
+      .container {
+        padding: 20px;
       }
     }
   </style>
@@ -156,7 +179,7 @@
     </div>
 
     <div class="logo-container">
-      <img src="https://services.ceet.tg/assets/img/ceet_logo1.png" alt="Logo">
+      <img src="https://services.ceet.tg/assets/img/ceet_logo1.png" alt="Logo CEET">
     </div>
   </div>
 
