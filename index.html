@@ -5,30 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GPS ↔ UTM - Togo</title>
   <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Leaflet pour la carte -->
+  <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
 
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #f2f7fc;
+      --text: #0f172a;
+      --card: #ffffff;
+      --primary: #0077cc;
+      --primary-dark: #005fa3;
+      --shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
 
+    [data-theme="dark"] {
+      --bg: #0b1020;
+      --text: #e2e8f0;
+      --card: #1e293b;
+      --primary: #38bdf8;
+      --primary-dark: #0284c7;
+      --shadow: 0 8px 20px rgba(255,255,255,0.05);
+    }
+
+    * { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f7fc;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
+    header {
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      background: var(--primary);
+      color: #fff;
+      position: relative;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      top: 12px;
+      right: 15px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #fff;
+    }
+
     .container {
-      background: white;
+      background: var(--card);
       padding: 25px;
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow);
       max-width: 500px;
       width: 90%;
       text-align: center;
@@ -40,16 +80,17 @@
     button {
       padding: 12px 20px;
       font-size: 16px;
-      background: linear-gradient(90deg, #0077cc, #005fa3);
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
       color: white;
       border: none;
       border-radius: 30px;
       cursor: pointer;
       margin-top: 10px;
       transition: all 0.3s ease;
+      font-weight: 600;
     }
     button:hover {
-      background: linear-gradient(90deg, #005fa3, #004a85);
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
       transform: translateY(-2px);
     }
 
@@ -63,10 +104,8 @@
     }
 
     p { font-size: 15px; margin: 8px 0; }
-
-    a { color: #0077cc; font-weight: bold; text-decoration: none; }
+    a { color: var(--primary); font-weight: 600; text-decoration: none; }
     a:hover { text-decoration: underline; }
-
     hr { margin: 25px 0; }
 
     #map {
@@ -110,10 +149,12 @@
   </style>
 </head>
 <body>
+  <header>
+    📍 Convertisseur GPS ↔️ UTM (Togo - Zone 31N)
+    <button id="themeToggle" class="toggle-btn">🌙</button>
+  </header>
 
   <div class="container">
-    <h1>📍 Convertisseur GPS ↔️ UTM (Togo - Zone 31N)</h1>
-
     <button onclick="getLocation()">🌍 Obtenir ma position actuelle</button>
     <a href="converter.html"><button>⚡ Convertisseur GPS avancé</button></a>
     <div id="result"></div>
@@ -126,7 +167,6 @@
     <button onclick="convertUTM()">📌 Convertir vers GPS</button>
     <div id="utmResult"></div>
 
-    <!-- Carte -->
     <div id="map"></div>
   </div>
 
@@ -141,7 +181,21 @@
     const utm31n = "+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs";
     let map, marker;
 
-    // Initialisation carte Leaflet
+    // Gestion thème
+    const themeToggle = document.getElementById("themeToggle");
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) root.setAttribute("data-theme", savedTheme);
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", currentTheme);
+      localStorage.setItem("theme", currentTheme);
+      themeToggle.textContent = currentTheme === "dark" ? "🌞" : "🌙";
+    });
+    themeToggle.textContent = root.getAttribute("data-theme") === "dark" ? "🌞" : "🌙";
+
+    // Initialisation carte
     function initMap(lat = 6.137, lon = 1.215) {
       if (!map) {
         map = L.map("map").setView([lat, lon], 7);
@@ -176,22 +230,21 @@
         <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
         <p><strong>Easting :</strong> ${easting.toFixed(0)} m</p>
         <p><strong>Northing :</strong> ${northing.toFixed(0)} m</p>
-        <p><a href="${link}" target="_blank">🧭 Itinéraire vers ma position (Google Maps)</a></p>
+        <p><a href="${link}" target="_blank">🧭 Itinéraire Google Maps</a></p>
       `;
       initMap(lat, lon);
     }
 
+    // Conversion UTM -> GPS
     function convertUTM() {
       const easting = parseFloat(document.getElementById("easting").value);
       const northing = parseFloat(document.getElementById("northing").value);
       if (isNaN(easting) || isNaN(northing)) {
-        document.getElementById("utmResult").innerHTML = "<p style='color:red;'>❌ Veuillez entrer des valeurs valides.</p>";
+        document.getElementById("utmResult").innerHTML = "<p style='color:red;'>❌ Valeurs invalides.</p>";
         return;
       }
-
       const [lon, lat] = proj4(utm31n, "WGS84", [easting, northing]);
       const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
-
       document.getElementById("utmResult").innerHTML = `
         <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
         <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
@@ -201,14 +254,12 @@
     }
 
     function showError(error) {
-      let msg = "";
-      switch (error.code) {
-        case error.PERMISSION_DENIED: msg = "Permission refusée."; break;
-        case error.POSITION_UNAVAILABLE: msg = "Position non disponible."; break;
-        case error.TIMEOUT: msg = "Temps de localisation dépassé."; break;
-        default: msg = "Erreur inconnue.";
-      }
-      document.getElementById("result").innerHTML = `<p style="color:red;">${msg}</p>`;
+      const messages = {
+        1: "Permission refusée.",
+        2: "Position non disponible.",
+        3: "Délai dépassé."
+      };
+      document.getElementById("result").innerHTML = `<p style="color:red;">${messages[error.code] || "Erreur inconnue."}</p>`;
     }
   </script>
 </body>
