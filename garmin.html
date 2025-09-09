@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPS ↔ UTM - Togo</title>
+  <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0a192f, #1e3c72, #2a5298);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.6);
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin: 0;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      background: #00c6ff;
+      color: #000;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0072ff;
+      color: #fff;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0,0,0,0.6);
+    }
+    footer img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+    footer img:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📍 Convertisseur GPS ↔ UTM - Togo</h1>
+  </header>
+
+  <main>
+    <button onclick="getLocation()">Obtenir ma position</button>
+    <div id="output">Votre position apparaîtra ici...</div>
+    <button onclick="copyPosition()">📋 Copier la position</button>
+  </main>
+
+  <footer>
+    <a href="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3" target="_blank">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Logo">
+    </a>
+  </footer>
+
+  <script>
+    let currentPosition = "";
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        document.getElementById("output").innerHTML = "La géolocalisation n'est pas supportée par ce navigateur.";
+      }
+    }
+
+    function showPosition(position) {
+      currentPosition = "Latitude: " + position.coords.latitude + 
+                       " | Longitude: " + position.coords.longitude;
+      document.getElementById("output").innerHTML = currentPosition;
+    }
+
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          document.getElementById("output").innerHTML = "⛔ Permission refusée.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          document.getElementById("output").innerHTML = "❌ Position indisponible.";
+          break;
+        case error.TIMEOUT:
+          document.getElementById("output").innerHTML = "⌛ Temps d'attente dépassé.";
+          break;
+        default:
+          document.getElementById("output").innerHTML = "⚠️ Erreur inconnue.";
+          break;
+      }
+    }
+
+    function copyPosition() {
+      if (currentPosition !== "") {
+        navigator.clipboard.writeText(currentPosition).then(() => {
+          alert("📋 Position copiée !");
+        }).catch(err => {
+          alert("Erreur lors de la copie : " + err);
+        });
+      } else {
+        alert("Veuillez d'abord générer votre position.");
+      }
+    }
+  </script>
+</body>
+</html>
