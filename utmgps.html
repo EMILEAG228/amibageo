@@ -5,16 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png">
   <title>GPS ↔ UTM - Togo</title>
+
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f2f7fc;
-      margin: 0;
-      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: 300% 300%;
+      animation: gradientBG 12s ease infinite;
+      color: #eaeaea;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -22,43 +26,71 @@
       justify-content: space-between;
     }
 
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .container {
-      background: white;
+      background: rgba(255, 255, 255, 0.08);
       padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      max-width: 500px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      max-width: 550px;
       width: 90%;
       text-align: center;
-      margin-top: 30px;
+      margin-top: 40px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1, h2 {
       margin-bottom: 15px;
+      color: #00e6ff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 20px;
       font-size: 15px;
-      background: #0077cc;
+      background: linear-gradient(135deg, #00e6ff, #0077cc);
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
     }
 
     button:hover {
-      background: #005fa3;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
     }
 
     input {
-      padding: 8px;
-      margin: 5px 0;
-      width: 90%;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 8px 0;
+      width: 95%;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.4);
+      color: #eaeaea;
       font-size: 15px;
+      outline: none;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border: 1px solid #00e6ff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
     }
 
     p {
@@ -67,7 +99,7 @@
     }
 
     a {
-      color: #0077cc;
+      color: #00e6ff;
       font-weight: bold;
       text-decoration: none;
     }
@@ -78,23 +110,26 @@
 
     hr {
       margin: 30px 0;
+      border: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #00e6ff, transparent);
     }
 
     footer {
       text-align: center;
       margin: 20px 0;
+      color: #bbb;
     }
 
     #logo-footer {
-      width: 6cm;
-      height: 6cm;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       overflow: hidden;
       margin: 0 auto;
-      animation: colorChange 6s infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 3px solid #00e6ff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+      animation: pulse 4s infinite;
     }
 
     #logo-footer img {
@@ -103,12 +138,10 @@
       object-fit: cover;
     }
 
-    @keyframes colorChange {
-      0%   { background-color: #ff5f5f; }
-      25%  { background-color: #ffd700; }
-      50%  { background-color: #5fff9e; }
-      75%  { background-color: #5fbaff; }
-      100% { background-color: #ff5f5f; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); }
+      50% { box-shadow: 0 0 40px rgba(0, 255, 255, 1); }
+      100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); }
     }
 
     @media (max-width: 600px) {
@@ -117,25 +150,27 @@
         width: 95%;
       }
       #logo-footer {
-        width: 4cm;
-        height: 4cm;
+        width: 90px;
+        height: 90px;
       }
     }
   </style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
 </head>
 <body>
 
   <div class="container">
-    <h1>📍 Convertisseur GPS ↔️ UTM (Togo - Zone 31N)</h1>
+    <h1>📍 Convertisseur GPS ↔️ UTM</h1>
+    <h2>Togo - Zone 31N</h2>
 
     <button onclick="getLocation()">🌍 Obtenir ma position actuelle</button>
-    <a href="index.html"><button>Retour</button></a>
+    <a href="index.html"><button>⬅ Retour</button></a>
     <div id="result"></div>
 
     <hr>
 
-    <h2>🧭 Convertir coordonnées UTM (zone 31N)</h2>
+    <h2>🧭 Convertir coordonnées UTM</h2>
     <input type="number" id="easting" placeholder="Easting (ex: 293281)">
     <input type="number" id="northing" placeholder="Northing (ex: 686252)">
     <button onclick="convertUTM()">📌 Convertir vers GPS</button>
@@ -144,9 +179,9 @@
 
   <footer>
     <div id="logo-footer">
-      <img src="https://services.ceet.tg/assets/img/ceet_logo1.png">
+      <img src="https://services.ceet.tg/assets/img/ceet_logo1.png" alt="Logo CEET">
     </div>
-    <p style="margin-top: 10px; color: #555;">&copy; 2025 AmiBa Groupe - Tous droits réservés</p>
+    <p>&copy; 2025 AmiBa Groupe - Tous droits réservés 🚀</p>
   </footer>
 
   <script>
@@ -154,18 +189,15 @@
 
     function getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError, {
-          enableHighAccuracy: true
-        });
+        navigator.geolocation.getCurrentPosition(showPosition, showError, { enableHighAccuracy: true });
       } else {
-        document.getElementById("result").innerHTML = "La géolocalisation n'est pas supportée par ce navigateur.";
+        document.getElementById("result").innerHTML = "❌ La géolocalisation n'est pas supportée par ce navigateur.";
       }
     }
 
     function showPosition(position) {
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
-
       const [easting, northing] = proj4('WGS84', utm31n, [lon, lat]);
       const directionLink = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
 
@@ -175,7 +207,7 @@
         <p><strong>Zone UTM :</strong> 31N</p>
         <p><strong>Easting :</strong> ${easting.toFixed(0)} m</p>
         <p><strong>Northing :</strong> ${northing.toFixed(0)} m</p>
-        <p><a href="${directionLink}" target="_blank">🧭 Itinéraire vers ma position (Google Maps)</a></p>
+        <p><a href="${directionLink}" target="_blank">🧭 Voir ma position dans Google Maps</a></p>
       `;
     }
 
@@ -184,7 +216,7 @@
       const northing = parseFloat(document.getElementById("northing").value);
 
       if (isNaN(easting) || isNaN(northing)) {
-        document.getElementById("utmResult").innerHTML = `<p style="color:red;">Veuillez remplir les champs correctement.</p>`;
+        document.getElementById("utmResult").innerHTML = `<p style="color:red;">⚠️ Veuillez remplir les champs correctement.</p>`;
         return;
       }
 
@@ -194,16 +226,16 @@
       document.getElementById("utmResult").innerHTML = `
         <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
         <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
-        <p><a href="${directionLink}" target="_blank">🧭 Lancer l'itinéraire vers cette position (Google Maps)</a></p>
+        <p><a href="${directionLink}" target="_blank">🧭 Ouvrir dans Google Maps</a></p>
       `;
     }
 
     function showError(error) {
       let message = "";
       switch (error.code) {
-        case error.PERMISSION_DENIED: message = "Permission refusée."; break;
-        case error.POSITION_UNAVAILABLE: message = "Position non disponible."; break;
-        case error.TIMEOUT: message = "Temps de localisation dépassé."; break;
+        case error.PERMISSION_DENIED: message = "❌ Permission refusée."; break;
+        case error.POSITION_UNAVAILABLE: message = "⚠️ Position non disponible."; break;
+        case error.TIMEOUT: message = "⌛ Temps de localisation dépassé."; break;
         default: message = "Erreur inconnue.";
       }
       document.getElementById("result").innerHTML = `<p style="color:red;">${message}</p>`;
