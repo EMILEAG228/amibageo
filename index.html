@@ -1,266 +1,186 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GPS ↔ UTM - Togo</title>
-  <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accueil - CEET IA Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+* { margin:0; padding:0; box-sizing:border-box; }
 
-  <style>
-    :root {
-      --bg: #f2f7fc;
-      --text: #0f172a;
-      --card: #ffffff;
-      --primary: #0077cc;
-      --primary-dark: #005fa3;
-      --shadow: 0 6px 20px rgba(0,0,0,0.1);
-    }
+body {
+    font-family: 'Orbitron', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background: #0a0a0a;
+    color: #00fff0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    [data-theme="dark"] {
-      --bg: #0b1020;
-      --text: #e2e8f0;
-      --card: #1e293b;
-      --primary: #38bdf8;
-      --primary-dark: #0284c7;
-      --shadow: 0 8px 20px rgba(255,255,255,0.05);
-    }
+canvas#network {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    display:block;
+}
 
-    * { box-sizing: border-box; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+.container {
+    position: relative;
+    z-index:2;
+    text-align: center;
+}
 
-    header {
-      width: 100%;
-      text-align: center;
-      padding: 15px;
-      font-size: 18px;
-      font-weight: 600;
-      background: var(--primary);
-      color: #fff;
-      position: relative;
-    }
+.logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #00fff0;
+    box-shadow: 0 0 30px #00fff0, 0 0 60px #ff0057 inset;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite alternate;
+    object-fit: cover;
+}
 
-    .toggle-btn {
-      position: absolute;
-      top: 12px;
-      right: 15px;
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #fff;
-    }
+h1 {
+    font-size: 3rem;
+    margin-bottom: 50px;
+    text-shadow: 0 0 20px #00fff0, 0 0 40px #ff0057;
+    animation: glow 2s infinite alternate;
+}
 
-    .container {
-      background: var(--card);
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-      max-width: 500px;
-      width: 90%;
-      text-align: center;
-      margin-top: 20px;
-    }
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
 
-    h1, h2 { margin-bottom: 15px; }
+.btn {
+    padding: 20px 60px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    color: #000;
+    background: linear-gradient(90deg,#ff0057,#00fff0);
+    box-shadow: 0 0 20px #00fff0, 0 0 50px #ff0057 inset;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
 
-    button {
-      padding: 12px 20px;
-      font-size: 16px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
-      color: white;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-    button:hover {
-      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
-      transform: translateY(-2px);
-    }
+.btn:hover {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+    box-shadow: 0 0 30px #00fff0, 0 0 60px #ff0057 inset;
+}
 
-    input {
-      padding: 10px;
-      margin: 6px 0;
-      width: 90%;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
+.btn:active {
+    transform: scale(0.95);
+    filter: brightness(0.9);
+}
 
-    p { font-size: 15px; margin: 8px 0; }
-    a { color: var(--primary); font-weight: 600; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    hr { margin: 25px 0; }
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px #00fff0,0 0 60px #ff0057 inset; }
+    50% { transform: scale(1.05); box-shadow: 0 0 40px #00fff0,0 0 80px #ff0057 inset; }
+    100% { transform: scale(1); box-shadow: 0 0 20px #00fff0,0 0 60px #ff0057 inset; }
+}
 
-    #map {
-      width: 100%;
-      height: 300px;
-      border-radius: 12px;
-      margin-top: 20px;
-    }
+@keyframes glow {
+    0% { text-shadow: 0 0 20px #00fff0,0 0 40px #ff0057; }
+    50% { text-shadow: 0 0 40px #00fff0,0 0 60px #ff0057; }
+    100% { text-shadow: 0 0 20px #00fff0,0 0 40px #ff0057; }
+}
 
-    footer {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    #logo-footer {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 0 auto;
-      animation: spin 12s linear infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #logo-footer img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0); }
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 600px) {
-      .container { width: 95%; padding: 20px; }
-      #map { height: 250px; }
-    }
-  </style>
+/* Responsive */
+@media(max-width:768px){
+    h1 { font-size:2rem; margin-bottom:30px; }
+    .btn { padding: 15px 40px; font-size:1.2rem; }
+    .buttons { gap:20px; }
+}
+</style>
 </head>
 <body>
-  <header>
-    📍 Convertisseur GPS ↔️ UTM (Togo - Zone 31N)
-    <button id="themeToggle" class="toggle-btn">🌙</button>
-  </header>
 
-  <div class="container">
-    <button onclick="getLocation()">🌍 Obtenir ma position actuelle</button>
-    <a href="converter.html"><button>⚡ Convertisseur GPS avancé</button></a>
-    <div id="result"></div>
+<canvas id="network"></canvas>
 
-    <hr>
+<div class="container">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMWXQ7BJAOD1HArizw2VDmUCKGU8tGIH9FOq79UjD5bD4_U43rqgDSSh1XoHno9xQsi-c" alt="Logo CEET" class="logo">
+    <h1>CEET Ref & GPS</h1>
 
-    <h2>🧭 Convertir coordonnées UTM (Zone 31N)</h2>
-    <input type="number" id="easting" placeholder="Easting (ex: 293281)">
-    <input type="number" id="northing" placeholder="Northing (ex: 686252)">
-    <button onclick="convertUTM()">📌 Convertir vers GPS</button>
-    <div id="utmResult"></div>
-
-    <div id="map"></div>
-  </div>
-
-  <footer>
-    <div id="logo-footer">
-      <img src="https://services.ceet.tg/assets/img/ceet_logo1.png">
+    <div class="buttons">
+        <button class="btn" onclick="window.location.href='public/index.html'">Référence</button>
+        <button class="btn" onclick="window.open('garmin.html','_blank')">GPS Garmin</button>
     </div>
-    <p>&copy; 2025 AmiBa Groupe - Tous droits réservés</p>
-  </footer>
+</div>
 
-  <script>
-    const utm31n = "+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs";
-    let map, marker;
+<script>
+// Réseau neural animé
+const canvas = document.getElementById('network');
+const ctx = canvas.getContext('2d');
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
 
-    // Gestion thème
-    const themeToggle = document.getElementById("themeToggle");
-    const root = document.documentElement;
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) root.setAttribute("data-theme", savedTheme);
-
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", currentTheme);
-      localStorage.setItem("theme", currentTheme);
-      themeToggle.textContent = currentTheme === "dark" ? "🌞" : "🌙";
+const nodes = [];
+const nodeCount = 50;
+for(let i=0;i<nodeCount;i++){
+    nodes.push({
+        x: Math.random()*width,
+        y: Math.random()*height,
+        vx: (Math.random()-0.5)*0.5,
+        vy: (Math.random()-0.5)*0.5
     });
-    themeToggle.textContent = root.getAttribute("data-theme") === "dark" ? "🌞" : "🌙";
+}
 
-    // Initialisation carte
-    function initMap(lat = 6.137, lon = 1.215) {
-      if (!map) {
-        map = L.map("map").setView([lat, lon], 7);
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          attribution: "&copy; OpenStreetMap"
-        }).addTo(map);
-        marker = L.marker([lat, lon]).addTo(map);
-      } else {
-        map.setView([lat, lon], 13);
-        marker.setLatLng([lat, lon]);
-      }
+function animate(){
+    ctx.clearRect(0,0,width,height);
+    
+    // Draw connections
+    for(let i=0;i<nodeCount;i++){
+        for(let j=i+1;j<nodeCount;j++){
+            let dx = nodes[i].x - nodes[j].x;
+            let dy = nodes[i].y - nodes[j].y;
+            let dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist<150){
+                ctx.strokeStyle = 'rgba(0,255,240,'+(1-dist/150)+')';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(nodes[i].x,nodes[i].y);
+                ctx.lineTo(nodes[j].x,nodes[j].y);
+                ctx.stroke();
+            }
+        }
     }
-    initMap();
+    
+    // Draw nodes
+    nodes.forEach(n=>{
+        n.x += n.vx;
+        n.y += n.vy;
+        if(n.x<0||n.x>width) n.vx*=-1;
+        if(n.y<0||n.y>height) n.vy*=-1;
+        ctx.fillStyle='#00fff0';
+        ctx.beginPath();
+        ctx.arc(n.x,n.y,3,0,Math.PI*2);
+        ctx.fill();
+    });
+    
+    requestAnimationFrame(animate);
+}
 
-    // Localisation utilisateur
-    function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError, { enableHighAccuracy: true });
-      } else {
-        document.getElementById("result").innerHTML = "❌ Géolocalisation non supportée.";
-      }
-    }
+animate();
 
-    function showPosition(position) {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const [easting, northing] = proj4("WGS84", utm31n, [lon, lat]);
-      const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+// Resize
+window.addEventListener('resize', ()=>{
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+});
+</script>
 
-      document.getElementById("result").innerHTML = `
-        <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
-        <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
-        <p><strong>Easting :</strong> ${easting.toFixed(0)} m</p>
-        <p><strong>Northing :</strong> ${northing.toFixed(0)} m</p>
-        <p><a href="${link}" target="_blank">🧭 Itinéraire Google Maps</a></p>
-      `;
-      initMap(lat, lon);
-    }
-
-    // Conversion UTM -> GPS
-    function convertUTM() {
-      const easting = parseFloat(document.getElementById("easting").value);
-      const northing = parseFloat(document.getElementById("northing").value);
-      if (isNaN(easting) || isNaN(northing)) {
-        document.getElementById("utmResult").innerHTML = "<p style='color:red;'>❌ Valeurs invalides.</p>";
-        return;
-      }
-      const [lon, lat] = proj4(utm31n, "WGS84", [easting, northing]);
-      const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
-      document.getElementById("utmResult").innerHTML = `
-        <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
-        <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
-        <p><a href="${link}" target="_blank">🧭 Itinéraire Google Maps</a></p>
-      `;
-      initMap(lat, lon);
-    }
-
-    function showError(error) {
-      const messages = {
-        1: "Permission refusée.",
-        2: "Position non disponible.",
-        3: "Délai dépassé."
-      };
-      document.getElementById("result").innerHTML = `<p style="color:red;">${messages[error.code] || "Erreur inconnue."}</p>`;
-    }
-  </script>
 </body>
 </html>
