@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>Convertisseur GPS ↔ Garmin | AmiBa Groupe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Librairie Proj4JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+
   <style>
     /* === Fond dynamique style IA === */
     body {
@@ -40,6 +43,7 @@
       height: 45px;
       margin-right: 12px;
       filter: drop-shadow(0 0 5px #00e5ff);
+      border-radius: 50%;
     }
 
     header h1 {
@@ -69,7 +73,7 @@
       gap: 40px;
     }
 
-    /* === Cards vitrées === */
+    /* === Cartes vitrées === */
     .box {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(12px);
@@ -97,6 +101,7 @@
       font-weight: bold;
       font-size: 0.9rem;
       color: #cfd9e9;
+      text-align: left;
     }
 
     input {
@@ -158,6 +163,13 @@
       border-top: 1px solid rgba(0,229,255,0.3);
     }
 
+    footer img {
+      width: 60px;
+      margin-top: 8px;
+      border-radius: 50%;
+      filter: drop-shadow(0 0 10px #ff6ec7);
+    }
+
     /* === Bouton Retour === */
     .return-button {
       position: fixed;
@@ -179,10 +191,14 @@
       box-shadow: 0 0 25px rgba(255,110,199,0.8);
     }
 
+    /* === Responsive === */
     @media (max-width: 768px) {
       .converter {
         flex-direction: column;
         align-items: center;
+      }
+      header h1 {
+        font-size: 18px;
       }
     }
   </style>
@@ -190,7 +206,7 @@
 <body>
 
   <header>
-    <img src="https://emileag228.github.io/AmiBa-Informactic/logo.png" alt="Logo">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7LjoGVRCfsc_r2NNjG_H_tO6E6PUlNzKDJQ&s" alt="Logo">
     <h1>AmiBa Groupe - Convertisseur GPS ↔ Garmin</h1>
   </header>
 
@@ -225,11 +241,12 @@
   </main>
 
   <footer>
-    © 2025 AmiBa Groupe | Développé par <strong>EMILE-AG 🚀</strong>
+    © 2025 AmiBa Groupe | Développé par <strong>EMILE-AG 🚀</strong><br>
+    <img src="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Logo AmiBa">
   </footer>
 
   <!-- Bouton Retour -->
-  <a href="index.html" class="return-button">⬅️ Retour</a>
+  <a href="garmin.html" class="return-button">⬅️ Retour</a>
 
   <script>
     const WGS84 = 'EPSG:4326';
