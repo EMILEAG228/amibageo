@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>⚡ GPS ↔ UTM - Énergie & IA</title>
+  <title>⚡ GPS ↔ UTM </title>
   <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png" />
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
@@ -185,13 +185,14 @@
   <canvas id="bgCanvas"></canvas>
 
   <header>
-    ⚡ Convertisseur GPS ↔️ UTM (IA & Énergie - Zone 31N)
+    ⚡ Convertisseur GPS ↔️ UTM (- Zone 31N)
     <button id="themeToggle" class="toggle-btn">🌙</button>
   </header>
 
   <div class="container">
     <button onclick="getLocation()">🌍 Obtenir ma position actuelle</button>
     <a href="converter.html"><button>🤖 Convertisseur GPS avancé</button></a>
+    <a href="utmgps.html"><button>UTM GPS</button></a>
     <div id="result"></div>
 
     <hr>
@@ -200,6 +201,7 @@
     <input type="number" id="easting" placeholder="Easting (ex: 293281)">
     <input type="number" id="northing" placeholder="Northing (ex: 686252)">
     <button onclick="convertUTM()">📌 Convertir vers GPS</button>
+     <button onclick="index.html">📌 Menu</button>
     <div id="utmResult"></div>
 
     <div id="map"></div>
