@@ -3,138 +3,355 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GPS ↔ UTM - Togo</title>
-  <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png">
+  <title>⚡ GPS ↔ UTM - Énergie & IA</title>
+  <link rel="icon" href="https://services.ceet.tg/assets/img/ceet_logo1.png" type="image/png" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js"></script>
+
   <style>
+    :root {
+      --bg: #0b0f1a;
+      --text: #e2e8f0;
+      --card: rgba(20, 25, 40, 0.95);
+      --primary: #00e5ff;
+      --primary-dark: #008cff;
+      --shadow: 0 0 25px rgba(0, 229, 255, 0.5);
+    }
+
+    * { box-sizing: border-box; }
     body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0a192f, #1e3c72, #2a5298);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    header {
-      text-align: center;
-      padding: 20px;
-      background: rgba(0,0,0,0.6);
-    }
-    h1 {
-      font-size: 1.8rem;
-      margin: 0;
-    }
-    main {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    /* Canvas fond électrique */
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle at center, #0b0f1a, #000);
+    }
+
+    header {
+      width: 100%;
       text-align: center;
       padding: 20px;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(90deg, #004cff, #00e5ff);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0,229,255,0.5);
+      position: relative;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #00e5ff;
     }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
+
+    .toggle-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: transparent;
       border: none;
-      border-radius: 8px;
+      font-size: 22px;
       cursor: pointer;
-      font-size: 1rem;
-      background: #00c6ff;
-      color: #000;
-      font-weight: bold;
-      transition: 0.3s;
+      color: #fff;
+      text-shadow: 0 0 8px cyan;
+    }
+
+    .container {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+      margin-top: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,229,255,0.3);
+      animation: fadeIn 1.2s ease;
+    }
+
+    h1, h2 {
+      margin-bottom: 15px;
+      font-family: 'Orbitron', sans-serif;
+      color: var(--primary);
+      text-shadow: 0 0 8px var(--primary);
+    }
+
+    button {
+      padding: 12px 22px;
+      font-size: 16px;
+      background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 600;
+      text-shadow: 0 0 5px #000;
+      box-shadow: 0 0 12px var(--primary);
     }
     button:hover {
-      background: #0072ff;
-      color: #fff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 20px var(--primary);
     }
-    #output {
-      margin-top: 20px;
-      padding: 15px;
-      background: rgba(255,255,255,0.1);
+
+    input {
+      padding: 12px;
+      margin: 8px 0;
+      width: 90%;
       border-radius: 8px;
-      font-size: 1rem;
-      word-break: break-word;
+      border: 1px solid #00e5ff;
+      font-size: 15px;
+      background: rgba(10, 15, 25, 0.9);
+      color: #e2e8f0;
+      outline: none;
+      box-shadow: inset 0 0 10px rgba(0,229,255,0.2);
     }
+    input:focus {
+      border-color: #00e5ff;
+      box-shadow: 0 0 12px #00e5ff;
+    }
+
+    p { font-size: 15px; margin: 8px 0; }
+    a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    hr { margin: 25px 0; border: 0; height: 1px; background: linear-gradient(90deg, transparent, cyan, transparent); }
+
+    #map {
+      width: 100%;
+      height: 320px;
+      border-radius: 12px;
+      margin-top: 20px;
+      box-shadow: 0 0 15px rgba(0,229,255,0.4);
+      border: 1px solid rgba(0,229,255,0.3);
+    }
+
     footer {
       text-align: center;
-      padding: 15px;
-      background: rgba(0,0,0,0.6);
+      margin: 25px 0;
+      font-size: 14px;
+      color: #aaa;
     }
-    footer img {
-      width: 50px;
-      height: 50px;
+
+    #logo-footer {
+      width: 85px;
+      height: 85px;
       border-radius: 50%;
-      transition: transform 0.3s;
+      overflow: hidden;
+      margin: 0 auto 10px;
+      animation: spin 10s linear infinite;
+      box-shadow: 0 0 20px rgba(0,229,255,0.6);
     }
-    footer img:hover {
-      transform: scale(1.1);
+    #logo-footer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .container { width: 95%; padding: 22px; }
+      #map { height: 250px; }
     }
   </style>
 </head>
 <body>
+  <!-- Fond animé électrique -->
+  <canvas id="bgCanvas"></canvas>
+
   <header>
-    <h1>📍 Convertisseur GPS ↔ UTM - Togo</h1>
+    ⚡ Convertisseur GPS ↔️ UTM (IA & Énergie - Zone 31N)
+    <button id="themeToggle" class="toggle-btn">🌙</button>
   </header>
 
-  <main>
-    <button onclick="getLocation()">Obtenir ma position</button>
-    <div id="output">Votre position apparaîtra ici...</div>
-    <button onclick="copyPosition()">📋 Copier la position</button>
-  </main>
+  <div class="container">
+    <button onclick="getLocation()">🌍 Obtenir ma position actuelle</button>
+    <a href="converter.html"><button>🤖 Convertisseur GPS avancé</button></a>
+    <div id="result"></div>
+
+    <hr>
+
+    <h2>🧭 Convertir coordonnées UTM (Zone 31N)</h2>
+    <input type="number" id="easting" placeholder="Easting (ex: 293281)">
+    <input type="number" id="northing" placeholder="Northing (ex: 686252)">
+    <button onclick="convertUTM()">📌 Convertir vers GPS</button>
+    <div id="utmResult"></div>
+
+    <div id="map"></div>
+  </div>
 
   <footer>
-    <a href="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3" target="_blank">
-      <img src="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Logo">
-    </a>
+    <div id="logo-footer">
+      <img src="https://tse3.mm.bing.net/th/id/OIP.5UUrDcKAdnWgBzRnzbKOSQHaHa?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3">
+    </div>
+    <p>&copy; 2025 ⚡ AmiBa Groupe - IA & Énergie Électrique</p>
   </footer>
 
   <script>
-    let currentPosition = "";
+    const utm31n = "+proj=utm +zone=31 +datum=WGS84 +units=m +no_defs";
+    let map, marker;
 
+    // Gestion thème
+    const themeToggle = document.getElementById("themeToggle");
+    const root = document.documentElement;
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) root.setAttribute("data-theme", savedTheme);
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", currentTheme);
+      localStorage.setItem("theme", currentTheme);
+      themeToggle.textContent = currentTheme === "dark" ? "🌞" : "🌙";
+    });
+    themeToggle.textContent = root.getAttribute("data-theme") === "dark" ? "🌞" : "🌙";
+
+    // Initialisation carte
+    function initMap(lat = 6.137, lon = 1.215) {
+      if (!map) {
+        map = L.map("map").setView([lat, lon], 7);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "&copy; OpenStreetMap"
+        }).addTo(map);
+        marker = L.marker([lat, lon]).addTo(map);
+      } else {
+        map.setView([lat, lon], 13);
+        marker.setLatLng([lat, lon]);
+      }
+    }
+    initMap();
+
+    // Localisation utilisateur
     function getLocation() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
+        navigator.geolocation.getCurrentPosition(showPosition, showError, { enableHighAccuracy: true });
       } else {
-        document.getElementById("output").innerHTML = "La géolocalisation n'est pas supportée par ce navigateur.";
+        document.getElementById("result").innerHTML = "❌ Géolocalisation non supportée.";
       }
     }
 
     function showPosition(position) {
-      currentPosition = "Latitude: " + position.coords.latitude + 
-                       " | Longitude: " + position.coords.longitude;
-      document.getElementById("output").innerHTML = currentPosition;
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const [easting, northing] = proj4("WGS84", utm31n, [lon, lat]);
+      const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+
+      document.getElementById("result").innerHTML = `
+        <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
+        <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
+        <p><strong>Easting :</strong> ${easting.toFixed(0)} m</p>
+        <p><strong>Northing :</strong> ${northing.toFixed(0)} m</p>
+        <p><a href="${link}" target="_blank">🧭 Itinéraire Google Maps</a></p>
+      `;
+      initMap(lat, lon);
+    }
+
+    // Conversion UTM -> GPS
+    function convertUTM() {
+      const easting = parseFloat(document.getElementById("easting").value);
+      const northing = parseFloat(document.getElementById("northing").value);
+      if (isNaN(easting) || isNaN(northing)) {
+        document.getElementById("utmResult").innerHTML = "<p style='color:red;'>❌ Valeurs invalides.</p>";
+        return;
+      }
+      const [lon, lat] = proj4(utm31n, "WGS84", [easting, northing]);
+      const link = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+      document.getElementById("utmResult").innerHTML = `
+        <p><strong>Latitude :</strong> ${lat.toFixed(6)}</p>
+        <p><strong>Longitude :</strong> ${lon.toFixed(6)}</p>
+        <p><a href="${link}" target="_blank">🧭 Itinéraire Google Maps</a></p>
+      `;
+      initMap(lat, lon);
     }
 
     function showError(error) {
-      switch(error.code) {
-        case error.PERMISSION_DENIED:
-          document.getElementById("output").innerHTML = "⛔ Permission refusée.";
-          break;
-        case error.POSITION_UNAVAILABLE:
-          document.getElementById("output").innerHTML = "❌ Position indisponible.";
-          break;
-        case error.TIMEOUT:
-          document.getElementById("output").innerHTML = "⌛ Temps d'attente dépassé.";
-          break;
-        default:
-          document.getElementById("output").innerHTML = "⚠️ Erreur inconnue.";
-          break;
+      const messages = {
+        1: "Permission refusée.",
+        2: "Position non disponible.",
+        3: "Délai dépassé."
+      };
+      document.getElementById("result").innerHTML = `<p style="color:red;">${messages[error.code] || "Erreur inconnue."}</p>`;
+    }
+
+    // Animation fond électrique
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.speedY = (Math.random() - 0.5) * 2;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = "#00e5ff";
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#00e5ff";
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
-    function copyPosition() {
-      if (currentPosition !== "") {
-        navigator.clipboard.writeText(currentPosition).then(() => {
-          alert("📋 Position copiée !");
-        }).catch(err => {
-          alert("Erreur lors de la copie : " + err);
-        });
-      } else {
-        alert("Veuillez d'abord générer votre position.");
+    function initParticles() {
+      particles = [];
+      for (let i = 0; i < 100; i++) {
+        particles.push(new Particle());
       }
     }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    });
   </script>
 </body>
 </html>
