@@ -198,48 +198,27 @@
     </div>
   </header>
 
-  <!-- MAIN: VIDEO + CONTROLS -->
-  <main class="card">
-    <div class="video-container" aria-label="Lecteur vidéo tutoriel">
-      <!-- Video source: CEET.mp4 (local) -->
-      <!-- Optionnel: tu peux ajouter un VTT pour sous-titres nommé CEET.vtt -->
-      <video id="player" preload="metadata" tabindex="0" controlsList="nodownload">
-        <source src="CEET.mp4" type="video/mp4">
-        <!-- Subtitles (optionnel) -->
-        <track id="captions" label="Français" kind="subtitles" srclang="fr" src="CEET.vtt" default>
-        Ton navigateur ne supporte pas la balise vidéo.
-      </video>
-    </div>
+<!-- MAIN: VIDEO + CONTROLS -->
+<main class="card">
+  <div class="video-container" aria-label="Lecteur vidéo tutoriel">
+    <!-- Remplacement par YouTube -->
+    <iframe 
+        width="100%" 
+        height="360" 
+        src="https://www.youtube.com/embed/60KxDlofMb8" 
+        title="Tutoriel CEET" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        allowfullscreen
+        style="border-radius:10px;">
+    </iframe>
+  </div>
 
-    <!-- Controls personnalisés (complémentaires) -->
-    <div class="controls" role="group" aria-label="Contrôles du lecteur">
-      <button id="playPause" title="Play / Pause">▶️</button>
-      <button id="stop" title="Stop">⏹️</button>
-
-      <input id="progress" class="progress" type="range" min="0" max="100" value="0" aria-label="Barre de progression">
-
-      <div class="time" aria-live="polite"><span id="current">00:00</span> / <span id="duration">00:00</span></div>
-
-      <select id="speed" title="Vitesse de lecture">
-        <option value="0.5">0.5×</option>
-        <option value="0.75">0.75×</option>
-        <option value="1" selected>1×</option>
-        <option value="1.25">1.25×</option>
-        <option value="1.5">1.5×</option>
-        <option value="2">2×</option>
-      </select>
-
-      <button id="mute" class="small" title="Couper le son">🔊</button>
-      <button id="cc" class="small" title="Sous-titres (si disponibles)">CC</button>
-      <button id="fs" class="small" title="Plein écran">⛶</button>
-      <a id="downloadLink" href="CEET.mp4" download class="small" title="Télécharger la vidéo">⬇️</a>
-    </div>
-
-    <!-- Short tips -->
-    <div style="margin-top:12px; color:rgba(255,255,255,0.75); font-size:0.95rem">
-      Raccourcis clavier : <strong>espace</strong> = play/pause, <strong>← / →</strong> = -5s / +5s, <strong>F</strong> = plein écran.
-    </div>
-  </main>
+  <!-- Optionnel: boutons et raccourcis restent inchangés -->
+  <div style="margin-top:12px; color:rgba(255,255,255,0.75); font-size:0.95rem">
+    Raccourcis clavier : <strong>espace</strong> = play/pause, <strong>← / →</strong> = -5s / +5s, <strong>F</strong> = plein écran.
+  </div>
+</main>
 
   <!-- SIDEBAR: Transcript + FAQ + Contact -->
   <aside>
@@ -420,3 +399,4 @@
 </script>
 </body>
 </html>
+
